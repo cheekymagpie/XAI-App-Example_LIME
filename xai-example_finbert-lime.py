@@ -1,4 +1,4 @@
-# V6: Added more extensive performance monitoring (GPU, CPU, RAM)
+# V7: Add handling for an error if no GPU is available
 
 # Overarching goal of this script: Apply a LIME text explainer to finBERT, "a pre-trained NLP model to analyze sentiment of financial text"
 # finBERT repository: https://huggingface.co/ProsusAI/finbert
@@ -50,14 +50,17 @@ def monitor_resources():
         ram_usage = psutil.virtual_memory().percent
         # For GPU usage measuring
         gpus = GPUtil.getGPUs()
-        gpu = gpus[0]
-        gpu_load = gpu.load
-        gpu_memory_usage = gpu.memoryUtil
+        if gpus:
+            gpu = gpus[0]
+            gpu_load = gpu.load
+            gpu_memory_usage = gpu.memoryUtil
 
-        print(f"CPU Usage: {cpu_usage} %")
-        print(f"RAM Usage: {ram_usage} %")
-        print(f"GPU Load: {gpu_load * 100} %")
-        print(f"GPU Memory Usage: {gpu_memory_usage * 100} %")
+            print(f"CPU Usage: {cpu_usage} %")
+            print(f"RAM Usage: {ram_usage} %")
+            print(f"GPU Load: {gpu_load * 100} %")
+            print(f"GPU Memory Usage: {gpu_memory_usage * 100} %")
+        else:
+            print("No GPU available.")
 
         # Sleep for 300 seconds (5 minutes); we want to print resource monitoring output every 5 minutes
         time.sleep(300)

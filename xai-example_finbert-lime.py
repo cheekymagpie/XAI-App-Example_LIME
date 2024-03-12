@@ -50,6 +50,7 @@ def monitor_resources():
         ram_usage = psutil.virtual_memory().percent
         # For GPU usage measuring
         gpus = GPUtil.getGPUs()
+        # Check whether one or more GPUs are available
         if gpus:
             gpu = gpus[0]
             gpu_load = gpu.load
@@ -91,7 +92,7 @@ def run_model():
                 # Select model
                 model = AutoModelForSequenceClassification.from_pretrained("ProsusAI/finbert")
                 # Input the text sequence we want finBERT to classify into the tokenizer
-                # Example taken from: https://www.forbes.com/sites/dereksaul/2024/02/12/nvidia-is-now-more-valuable-than-amazon-and-google/
+                # Example article to get text from: https://www.forbes.com/sites/dereksaul/2024/02/12/nvidia-is-now-more-valuable-than-amazon-and-google/
                 input = tokenizer(user_input, return_tensors="pt")
                 # Tokenizing: Splitting text into tokens (words, subwords, characters) and then mapping each token to a unique integer (its ID in the model’s vocabulary)
                 # Output: PyTorch tensor where each element is the ID of a token in the input text
@@ -164,9 +165,9 @@ def run_model():
             # Add the canvas to the Tkinter window
             canvas.get_tk_widget().pack()
         
-        # Not sure what this error should actually be saying to be informative
+        # Catch any/all exceptions from trying to run the model or explainer
         except Exception as e:
-            messagebox.showerror("Error (catching exception related to ???)", str(e))
+            messagebox.showerror("Error (catching exception related to model execution or explanation generation):", str(e))
     # Error for when there is no user-entered text when the button is clicked        
     else:
         messagebox.showwarning("Missing input!", "Please enter a text sequence for the model to classify.")

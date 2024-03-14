@@ -171,8 +171,6 @@ def run_model():
     else:
         messagebox.showwarning("Missing input!", "Please enter a text sequence for the model to classify.")
 
-run_model()
-
 # Create a new Tkinter window
 window = tk.Tk()
 # Create a new text field

@@ -1,10 +1,7 @@
-# V7: Add handling for an error if no GPU is available
-
-# Overarching goal of this script: Apply a LIME text explainer to finBERT, "a pre-trained NLP model to analyze sentiment of financial text"
-# finBERT repository: https://huggingface.co/ProsusAI/finbert
+# Overarching goal of this script: Apply a LIME text explainer to distilBERT
 
 # Abstract description of what this script does, as summarized by Copilot:
-# 1. finBERT Model: The script uses the finBERT model to classify a given user input as positive, neutral, or negative.
+# 1. distilBERT Model: The script uses the distilBERT model to classify a given user input as positive, neutral, or negative.
 # 2. LIME Text Explainer: The script uses LIME (Local Interpretable Model-Agnostic Explanations) to explain the classification made by the finBERT model. 
 #    It identifies which parts (words or phrases) of the user input contribute most to the classification.
 # 3. Emergency Termination: To prevent excessive resource usage that could freeze your device, the script includes a feature that stops the script if it runs for longer than a set amount of time without producing a result.
@@ -87,11 +84,13 @@ def run_model():
             signal.alarm(time_limit)
             try:
 
+                # Save model name to a variable
+                model_name = "distilbert-base-uncased-finetuned-sst-2-english"
                 # Select tokenizer
-                tokenizer = AutoTokenizer.from_pretrained("ProsusAI/finbert")
+                tokenizer = AutoTokenizer.from_pretrained(model_name)
                 # Select model
-                model = AutoModelForSequenceClassification.from_pretrained("ProsusAI/finbert")
-                # Input the text sequence we want finBERT to classify into the tokenizer
+                model = AutoModelForSequenceClassification.from_pretrained(model_name)
+                # Input the text sequence we want distilBERT to classify into the tokenizer
                 # Example article to get text from: https://www.forbes.com/sites/dereksaul/2024/02/12/nvidia-is-now-more-valuable-than-amazon-and-google/
                 tokenized_input = tokenizer(user_input, return_tensors="pt")
                 # Tokenizing: Splitting text into tokens (words, subwords, characters) and then mapping each token to a unique integer (its ID in the model’s vocabulary)
@@ -149,7 +148,7 @@ def run_model():
             result_label.config(text=str(explanation))
 
             # Prepare for graphical display of LIME explainer results
-            # Get the features and their weights (from the user's input, as weighted by finBERT)
+            # Get the features and their weights (from the user's input, as weighted by distilBERT)
             features = explanation.as_list()
             # Separate the feature names and weights
             feature_names = [feature[0] for feature in features]

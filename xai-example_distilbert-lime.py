@@ -132,8 +132,6 @@ def run_model():
                                                         predictor, 
                                                         num_features=6, 
                                                         labels=(predicted_class.item(),))
-                # Print the explanation
-                print(explanation)
 
             # Continuation of the emergency termination handler
             except Exception as exc:
@@ -144,13 +142,16 @@ def run_model():
                 stop_monitoring = True
                 monitor_thread.join()
 
-            # Display result in the same Tkinter window as the user input prompt    
-            result_label.config(text=str(explanation))
-
             # Prepare for graphical display of LIME explainer results
             # Get the features and their weights (from the user's input, as weighted by distilBERT)
             features = explanation.as_list()
-            # Separate the feature names and weights
+            # Set up features and weights in a readable format
+            feature_info = ', '.join(f'{name}: {weight}' for name, weight in features)
+            # Print result to the console for preliminary checking
+            print(feature_info)
+            # Display result in the same Tkinter window as the user input prompt    
+            result_label.config(text=feature_info)
+            # Separate the feature names and weights so that they can be used for two axes in a chart
             feature_names = [feature[0] for feature in features]
             feature_weights = [feature[1] for feature in features]
             # Create a new figure via matplotlib library
